@@ -13,6 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrderStatus{
+  PENDING
+  PAID
+  CANCELLED
+}
+
 model User{
   id          Int @id @default(autoincrement())
   email       String @unique
@@ -26,7 +32,9 @@ model Product{
   id          Int @id @default(autoincrement())
   name        String
   description String
-  price       Decimal
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  price       Decimal @db.Decimal(10,2)
   stock       Int
 
   categoryId  Int
@@ -37,29 +45,29 @@ model Product{
 
 model Category{
   id           Int @id @default(autoincrement())
-  name         String
+  name         String @unique
 
   products     Product[]
 }
 
 model Order{
   id            Int @id @default(autoincrement())
-  created_at    DateTime @default(now())
+  createdAt    DateTime @default(now())
   
-  total         Decimal
-  status        String
+  total         Decimal @db.Decimal(10,2)
+  status        OrderStatus @default(PENDING)
   
   userId        Int
 
   user          User @relation(fields: [userId], references: [id])
-  order_item    OrderItem[]
+  orderItems    OrderItem[]
 }
 
 model OrderItem{
   id            Int @id @default(autoincrement())
 
   quantity      Int
-  unitPrice    Decimal
+  unitPrice    Decimal @db.Decimal(10,2)
 
   orderId       Int
   productId     Int
