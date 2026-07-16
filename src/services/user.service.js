@@ -22,15 +22,16 @@ class UserService {
         });
     }
 
-    static async create(data) {
-        return await prisma.user.create({
-            data,
+    static async findByEmail(email) {
+        return await prisma.user.findUnique({
+            where: { email },
             select: {
                 id: true,
                 email: true,
-                name: true
+                name: true,
+                password: true
             }
-        });
+        })
     }
 
     static async update(id, data) {
